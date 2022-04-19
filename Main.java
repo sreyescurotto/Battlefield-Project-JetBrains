@@ -19,18 +19,72 @@ public class Main {
             { "~", "~", "~", "~", "~", "~", "~", "~", "~", "~" },
             { "~", "~", "~", "~", "~", "~", "~", "~", "~", "~" } };
     public static int count = 0;
-    public static int maxTries = 3;
+    public static int maxTries = 6;
+    public static int shipsNumber = 0;
 
     public static void main(String[] args) {
         showField(gameField);
-        airCraftCarrier();
-        battleShip();
-        subMarine();
-        cruiser();
-        destroyer();
+
+        while (shipsNumber < 5) {
+            airCraftCarrier();
+            battleShip();
+            subMarine();
+            cruiser();
+            destroyer();
+            System.out.print("The game starts!" + "\n");
+            break;
+        }
+        gameStart();
+        firtsTurn();
     }
 
-    private static void destroyer() throws RuntimeException {
+    private static void firtsTurn() {
+        while (true) {
+            try {
+                String oo = "O";
+                String c = scanner.next().toUpperCase(Locale.ROOT);
+                String number = c.substring(1);
+                String letter = String.valueOf(c.charAt(0));
+                int n = findNumber(letter);
+                int nn = Integer.parseInt(number);
+
+                if (n <= 9 && nn <= 10) {
+                    if (gameField[n][nn - 1] == oo) {
+                        gameField[n][nn - 1] = "X";
+                        hitaShip();
+                        break;
+                    } else if (gameField[n][nn - 1] == "~") {
+                        gameField[n][nn - 1] = "M";
+                        missaShot();
+                        break;
+                    }
+                }  else {
+                    throw  new RuntimeException();
+                }
+            } catch (RuntimeException e) {
+                System.out.print("Error! You entered the wrong coordinates! try again: " + "\n");
+                if (++count == maxTries) {throw e;}
+            }
+        }
+    }
+
+    private static void missaShot() {
+        showField(gameField);
+        System.out.println("You missed!");
+    }
+
+    private static void hitaShip() {
+        showField(gameField);
+        System.out.println("You hit a ship!");
+    }
+
+
+    private static void gameStart() {
+        showField(gameField);
+        System.out.println("Take a Shot!");
+    }
+
+    private static void destroyer() {
         while(true) {
             try {
                 System.out.print("Enter the coordinates of the Destroyer (2 cells): ");
@@ -52,10 +106,14 @@ public class Main {
                     } else if (nn - nn2 == cells - 1 || nn2 - nn == cells - 1) {
                         setValueInField(n, nn, n2, nn2);
                         break;
+                    } else {
+                        throw new RuntimeException();
                     }
-            } catch (RuntimeException e) {
+            }
+            catch (RuntimeException e) {
                 System.out.print("Error! Wrong length of the Destroyer! try again: " + "\n");
-                if (++count == maxTries) {throw e;}
+                if (++count == maxTries) {
+                    throw e;}
             }
         }
     }
@@ -128,30 +186,31 @@ public class Main {
     private static void battleShip() {
         while (true) {
             try {
-            System.out.print("Enter the coordinates of the Battleship (4 cells): ");
-            String c = scanner.next().toUpperCase(Locale.ROOT);
-            String c2 = scanner.next().toUpperCase(Locale.ROOT);
-            String number = c.substring(1);
-            String letter = String.valueOf(c.charAt(0));
-            String number2 = c2.substring(1);
-            String letter2 = String.valueOf(c2.charAt(0));
-            int n = findNumber(letter);
-            int nn = Integer.parseInt(number);
-            int n2 = findNumber(letter2);
-            int nn2 = Integer.parseInt(number2);
-            int cells = 4;
+                System.out.print("Enter the coordinates of the Battleship (4 cells): ");
+                String c = scanner.next().toUpperCase(Locale.ROOT);
+                String c2 = scanner.next().toUpperCase(Locale.ROOT);
+                String number = c.substring(1);
+                String letter = String.valueOf(c.charAt(0));
+                String number2 = c2.substring(1);
+                String letter2 = String.valueOf(c2.charAt(0));
+                int n = findNumber(letter);
+                int nn = Integer.parseInt(number);
+                int n2 = findNumber(letter2);
+                int nn2 = Integer.parseInt(number2);
+                int cells = 4;
 
-                if (n - n2 == cells - 1 || n2 - n == cells - 1) {
-                    setValueInField(n, nn, n2, nn2);
-                    break;
-                } else if (nn - nn2 == cells - 1 || nn2 - nn == cells - 1) {
-                    setValueInField(n, nn, n2, nn2);
-                    break;
-                }
+                    if (n - n2 == cells - 1 || n2 - n == cells - 1) {
+                        setValueInField(n, nn, n2, nn2);
+                        break;
+                    } else if (nn - nn2 == cells - 1 || nn2 - nn == cells - 1) {
+                        setValueInField(n, nn, n2, nn2);
+                        break;
+                    } else {
+                        throw new RuntimeException();
+                    }
             } catch (RuntimeException e) {
                 System.out.print("Error! Wrong length of the Battleship! try again: " + "\n");
                 if (++count == maxTries) {
-
                     throw e;}
             }
         }
@@ -197,6 +256,7 @@ public class Main {
                             throw new RuntimeException();
                         } else {
                             gameField[n][i - 1] = oo;
+                            shipsNumber++;
                         }
                     }
                     showField(gameField);
@@ -208,6 +268,7 @@ public class Main {
                             throw new RuntimeException();
                         } else {
                             gameField[n][i - 1] = oo;
+                            shipsNumber++;
                         }
                     }
                     showField(gameField);
@@ -216,24 +277,24 @@ public class Main {
                     for (int i = n; i <= n2; i++) {
                         if (gameField[i][nn - 1] == oo) {
                             throw new RuntimeException();
-
                         } else if (i < 9 && gameField[i + 1][nn - 1] == oo) {
                             throw new RuntimeException();
                         } else {
                             gameField[i][nn - 1] = oo;
+                            shipsNumber++;
                         }
                     }
                     showField(gameField);
                 } else if (nn == nn2 && n > n2) {
                     for (int i = n; i >= n2; i--) {
                         if (gameField[i][nn - 1] == oo) {
-
                             throw new RuntimeException();
                         } else if (i < 9 && gameField[i + 1][nn - 1] == oo) {
 
                             throw new RuntimeException();
                         } else {
                             gameField[i][nn - 1] = oo;
+                            shipsNumber++;
                         }
                     }
                     showField(gameField);
@@ -268,6 +329,10 @@ public class Main {
             n = 8;
         } else if (a.contains("J")) {
             n = 9;
+        } else if (a.contains("A")) {
+            n = 0;
+        } else {
+            n = 20;
         }
         return n;
     }
